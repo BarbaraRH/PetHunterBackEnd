@@ -16,7 +16,7 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(20), unique=True, nullable=True)
-    searchRequests = db.Column(db.Integer, unique=False, nullable=True)
+    searchRequests = db.Column(db.Integer, unique=False, nullable=True)#numero de solicitudes hecha por el usuario
     findings = db.Column(db.Integer, unique=False, nullable=True)
     photo = db.Column(db.String(300), unique=False, nullable=True)
 
