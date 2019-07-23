@@ -7,7 +7,7 @@ from flask_migrate import Migrate
 from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
-from models import db, User
+from models import db, User, Lost
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -25,7 +25,7 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-@app.route('/person', methods=['POST', 'GET'])
+@app.route('/user', methods=['POST', 'GET'])
 def handle_person():
     """
     Create person and retrieve all persons
@@ -56,8 +56,37 @@ def handle_person():
     return "Invalid Method", 404
 
 
-@app.route('/person/<int:person_id>', methods=['PUT', 'GET', 'DELETE'])
-def get_single_person(person_id):
+@app.route('/lost', methods=['POST', 'GET'])
+def handle_lost():
+    """
+    Create person and retrieve all persons
+    """
+
+    # POST request
+    if request.method == 'POST':
+        body = request.get_json()
+
+        if body is None:
+            raise APIException("You need to specify the request body as a json object", status_code=400)
+        if 'petName' not in body:
+            raise APIException('You need to specify the pet name', status_code=400)
+
+        request1 = Lost(user_id=body["user_id"], petName=body['petName'])
+        db.session.add(request1)
+        db.session.commit()
+        return "ok", 200
+
+    # GET request
+    if request.method == 'GET':
+        all_people = Lost.query.all()
+        all_people = list(map(lambda x: x.serialize(), all_people))
+        return jsonify(all_people), 200
+
+    return "Invalid Method", 404
+
+
+@app.route('/user/<int:user_id>', methods=['PUT', 'GET', 'DELETE'])
+def get_single_person(user_id):
     """
     Single person
     """
@@ -68,7 +97,7 @@ def get_single_person(person_id):
         if body is None:
             raise APIException("You need to specify the request body as a json object", status_code=400)
 
-        user1 = User.query.get(person_id)
+        user1 = User.query.get(user_id)
         if user1 is None:
             raise APIException('User not found', status_code=404)
 
@@ -82,14 +111,14 @@ def get_single_person(person_id):
 
     # GET request
     if request.method == 'GET':
-        user1 = User.query.get(person_id)
+        user1 = User.query.get(user_id)
         if user1 is None:
             raise APIException('User not found', status_code=404)
         return jsonify(user1.serialize()), 200
 
     # DELETE request
     if request.method == 'DELETE':
-        user1 = User.query.get(person_id)
+        user1 = User.query.get(user_id)
         if user1 is None:
             raise APIException('User not found', status_code=404)
         db.session.delete(user1)
@@ -97,7 +126,6 @@ def get_single_person(person_id):
         return "ok", 200
 
     return "Invalid Method", 404
-
 
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))

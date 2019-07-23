@@ -15,11 +15,10 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(20), unique=True, nullable=False)
-    searchRequests = db.Column(db.Integer, unique=False, nullable=False)
-    findings = db.Column(db.Integer, unique=False, nullable=False)
+    password = db.Column(db.String(20), unique=True, nullable=True)
+    searchRequests = db.Column(db.Integer, unique=False, nullable=True)
+    findings = db.Column(db.Integer, unique=False, nullable=True)
     photo = db.Column(db.String(300), unique=False, nullable=True)
-
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -27,23 +26,23 @@ class User(db.Model):
     def serialize(self):
         return {
             "username": self.username,
-            "email": self.email
+            "email": self.email,
+            "id": self.id
         }
 
 class Lost(db.Model):
     __tablename__ = 'lost'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
+    petName = db.Column(db.String(80), unique=False, nullable=False)
 
     def __repr__(self):
-        return '<Lost %r>' % self.username
+        return '<Lost %r>' % self.id
 
     def serialize(self):
         return {
-            "username": self.username,
-            "email": self.email
+            "user_id": self.user_id,
+            "petName": self.petName
         }
 
 class Finded(db.Model):
