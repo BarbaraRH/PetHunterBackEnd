@@ -7,7 +7,7 @@ from flask_migrate import Migrate
 from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
-from models import db, User, Lost
+from models import db, User, Lost, Finded
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -85,6 +85,34 @@ def handle_lost():
     return "Invalid Method", 404
 
 
+@app.route('/finded', methods=['POST', 'GET'])
+def handle_finded():
+    """
+    Create person and retrieve all persons
+    """
+
+    # POST request
+    if request.method == 'POST':
+        body = request.get_json()
+
+        if body is None:
+            raise APIException("You need to specify the request body as a json object", status_code=400)
+        if 'findedPet' not in body:
+            raise APIException('You need to specify the finded pet', status_code=400)
+
+        request2 = Finded(user_id=body["user_id"], findedPet=body['findedPet'])
+        db.session.add(request2)
+        db.session.commit()
+        return "ok", 200
+
+    # GET request
+    if request.method == 'GET':
+        all_people = Finded.query.all()
+        all_people = list(map(lambda x: x.serialize(), all_people))
+        return jsonify(all_people), 200
+
+    return "Invalid Method", 404
+
 @app.route('/user/<int:user_id>', methods=['PUT', 'GET', 'DELETE'])
 def get_single_person(user_id):
     """
@@ -130,3 +158,4 @@ def get_single_person(user_id):
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
     app.run(host='0.0.0.0', port=PORT)
+
