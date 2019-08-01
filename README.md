@@ -53,3 +53,146 @@ Make sure you have commited your changes and push to heroku
 ```sh
 $ git push heroku master
 ```
+
+# PET HUNTER API
+
+### USERS
+
+1. POST `/users`
+
+```
+BODY:
+
+{ username: "", mail: "",  password: ""}
+
+
+RESPONSE:
+
+{
+    "result": "ok"
+}
+```
+
+
+2. GET `/users`
+
+```
+RESPONSE:
+
+[
+    { username: "", mail: "",  password: "", userid:int}
+    { username: "", mail: "",  password: "", userid:int}
+    { username: "", mail: "",  password: "", userid:int}
+    { username: "", mail: "",  password: "", userid:int}...
+]
+```
+
+
+### USERS/USER_ID
+
+1. PUT `/users/userid`
+
+```
+BODY:
+
+{ field: ""}
+
+
+RESPONSE:
+
+{ username: "", mail: "",  password: ""}, 200
+```
+
+2. GET `/users/userid`
+
+```
+RESPONSE:
+
+[
+    { username: "", mail: "",  password: ""}
+]
+```
+
+3. DELETE `/users/userid`
+
+```
+RESPONSE:
+
+{
+    "result": "ok"
+}
+```
+### USERS/LOGIN
+
+1. POST `/users/login`
+```
+BODY:
+
+{ mail: "",  password: ""}
+
+
+RESPONSE:
+
+{ result: true, id: int} or { result: false}
+```
+### POSTS
+
+1. GET `/posts`
+
+```
+RESPONSE:
+
+[
+    { userid:int, postid:int, date: date, status:"", dogname:"", size:"", breed:"", description:"", location:"",},
+    { userid:int, postid:int, date: date, status:"", dogname:"", size:"", breed:"", description:"", location:"",},
+    { userid:int, postid:int, date: date, status:"", dogname:"", size:"", breed:"", description:"", location:"",}
+]
+```
+2. POST `/posts`
+
+```
+BODY:
+{ userid:int, status:"", dogname:"", size:"", breed:"", description:"", location:"",}
+
+RESPONSE:
+
+{ result: "ok"}
+```
+
+### POSTS/POSTID
+
+1. PUT `/posts/postid`
+
+```
+BODY:
+
+{ field: ""}
+
+
+RESPONSE:
+
+{ userid:int, postid:int, date: date, status:"", dogname:"", size:"", breed:"", description:"", location:"",}, 200
+```
+
+2. GET `/posts/postid`
+
+```
+RESPONSE:
+
+{ userid:int, postid:int, date: date, status:"", dogname:"", size:"", breed:"", description:"", location:"",}
+
+```
+
+3. DELETE `/posts/postid`
+
+```
+RESPONSE:
+
+{
+    "result": "ok"
+}
+```
+
+otros:
+
+duda en consultas query y respuesta. es con post?, para login, search, posts de un usuario
