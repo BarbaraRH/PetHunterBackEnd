@@ -14,10 +14,10 @@ class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
+    firstname = db.Column(db.String(80), unique=True, nullable=False)
+    lastname = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(20), unique=True, nullable=True)
-    searchRequests = db.Column(db.Integer, unique=False, nullable=True)
-    findings = db.Column(db.Integer, unique=False, nullable=True)
     photo = db.Column(db.String(300), unique=False, nullable=True)
 
     def __repr__(self):
@@ -30,34 +30,42 @@ class User(db.Model):
             "id": self.id
         }
 
-class Lost(db.Model):
-    __tablename__ = 'lost'
+class Pets(db.Model):
+    __tablename__ = 'pets'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    petName = db.Column(db.String(80), unique=False, nullable=False)
+    name = db.Column(db.String(80), unique=True, nullable=True)
+    breed = db.Column(db.String(80), unique=True, nullable=True)
+    gender = db.Column(db.String(80), unique=True, nullable=True)
+    size = db.Column(db.String(120), unique=True, nullable=False)
+    photo = db.Column(db.String(300), unique=False, nullable=True)
 
     def __repr__(self):
-        return '<Lost %r>' % self.id
+        return '<User %r>' % self.username
 
     def serialize(self):
         return {
-            "user_id": self.user_id,
-            "petName": self.petName
+            "username": self.username,
+            "email": self.email,
+            "id": self.id
         }
 
-class Finded(db.Model):
-    __tablename__ = 'finded'
+class Adverts(db.Model):
+    __tablename__ = 'adverts'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    findedPet = db.Column(db.String(80), unique=False, nullable=False)
+    pet_id = db.Column(db.Integer, db.ForeignKey('pets.id'))
+    description = db.Column(db.String(80), unique=False, nullable=False)
+    created_at = db.Column(db.DateTime, unique=False, nullable=False)
+    status = db.Column(db.String(80), unique=False, nullable=False)
+    address = db.Column(db.String(80), unique=False, nullable=False)
 
     def __repr__(self):
-        return '<Finded %r>' % self.id
+        return 'Adverts %r>' % self.id
 
     def serialize(self):
         return {
             "user_id": self.user_id,
-            "findedPet": self.findedPet
+            "status": self.status
         }
 
 render_er(db.Model, 'diagram.png')
