@@ -119,10 +119,10 @@ def handle_adverts():
 
     # GET request
     if request.method == 'GET':
-        status=request.args.get('status')
-        all_people = Adverts.query.all()
-        all_people = list(map(lambda x: x.serialize(), all_people))
-        return all_people
+        all_adverts = Adverts.query.filter_by(status="lost")
+        all_adverts = list(map(lambda x: x.serialize(), all_adverts))
+
+        return jsonify(all_adverts), 200
 
 
     return "Invalid Method", 404
