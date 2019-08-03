@@ -119,7 +119,8 @@ def handle_adverts():
 
     # GET request
     if request.method == 'GET':
-        all_adverts = Adverts.query.filter_by(status="lost")
+        status = request.args.get('status')
+        all_adverts = Adverts.query.filter_by(status=status)
         all_adverts = list(map(lambda x: x.serialize(), all_adverts))
 
         return jsonify(all_adverts), 200
