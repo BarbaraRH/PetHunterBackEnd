@@ -7,7 +7,7 @@ from flask_migrate import Migrate
 from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
-from models import db, User, Adverts
+from models import db, User, Adverts, Pets
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -25,7 +25,7 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-@app.route('/user', methods=['POST', 'GET'])
+@app.route('/user', methods=['POST', 'GET', 'DELETE'])
 def handle_person():
     """
     Create person and retrieve all persons
@@ -53,10 +53,47 @@ def handle_person():
         all_people = list(map(lambda x: x.serialize(), all_people))
         return jsonify(all_people), 200
 
+    if request.method == 'DELETE':
+        delete_all= User.query().delete()
+        db.session.delete(delete_all)
+        return jsonify(delete_all), 200
+
+    return "Invalid Method", 404
+
+@app.route('/pets', methods=['POST', 'GET'])
+def handle_pets():
+    """
+    Create person and retrieve all persons
+    """
+
+    # POST request
+    if request.method == 'POST':
+        body = request.get_json()
+
+        if body is None:
+            raise APIException("You need to specify the request body as a json object", status_code=400)
+        if 'name' not in body:
+            raise APIException('You need to specify the name', status_code=400)
+
+        user1 = Pets(name=body['name'])
+        db.session.add(user1)
+        db.session.commit()
+        return "ok", 200
+
+    # GET request
+    if request.method == 'GET':
+        all_people = Pets.query.all()
+        all_people = list(map(lambda x: x.serialize(), all_people))
+        return jsonify(all_people), 200
+
     return "Invalid Method", 404
 
 
-@app.route('/Adverts', methods=['POST', 'GET'])
+
+
+
+@app.route('/adverts', methods=['POST', 'GET'])
+
 def handle_adverts():
     """
     Create ad and retrieve all ads
@@ -68,19 +105,25 @@ def handle_adverts():
 
         if body is None:
             raise APIException("You need to specify the request body as a json object", status_code=400)
-        if 'petName' not in body:
+        if 'user_id' not in body:
+            raise APIException('You need to specify the pet name', status_code=400)
+        if 'pet_id' not in body:
+            raise APIException('You need to specify the pet name', status_code=400)
+        if 'status' not in body:
             raise APIException('You need to specify the pet name', status_code=400)
 
-        request1 = Ad(user_id=body["user_id"], petName=body['petName'], status=body['status'])
+        request1 = Adverts(user_id=body["user_id"], pet_id=body['pet_id'], status=body['status'])
         db.session.add(request1)
         db.session.commit()
         return "ok", 200
 
     # GET request
     if request.method == 'GET':
-        all_people = Ad.query.all()
+        status=request.args.get('status')
+        all_people = Adverts.query.all()
         all_people = list(map(lambda x: x.serialize(), all_people))
-        return jsonify(all_people), 200
+        return all_people
+
 
     return "Invalid Method", 404
 
