@@ -65,8 +65,10 @@ class Adverts(db.Model):
     def serialize(self):
         return {
             "user_id": self.user_id,
+            "pet_id": self.pet_id,
             "status": self.status,
             "created_at": self.created_at
         }
+
 
 render_er(db.Model, 'diagram.png')

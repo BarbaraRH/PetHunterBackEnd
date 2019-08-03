@@ -60,26 +60,11 @@ def handle_person():
 
     return "Invalid Method", 404
 
-@app.route('/pets', methods=['POST', 'GET'])
+@app.route('/pets', methods=['GET'])
 def handle_pets():
     """
     Create person and retrieve all persons
     """
-
-    # POST request
-    if request.method == 'POST':
-        body = request.get_json()
-
-        if body is None:
-            raise APIException("You need to specify the request body as a json object", status_code=400)
-        if 'name' not in body:
-            raise APIException('You need to specify the name', status_code=400)
-
-        user1 = Pets(name=body['name'])
-        db.session.add(user1)
-        db.session.commit()
-        return "ok", 200
-
     # GET request
     if request.method == 'GET':
         all_people = Pets.query.all()
@@ -111,6 +96,10 @@ def handle_adverts():
             raise APIException('You need to specify the pet name', status_code=400)
         if 'status' not in body:
             raise APIException('You need to specify the pet name', status_code=400)
+
+        pet1 = Pets(name=body['name'])
+        db.session.add(pet1)
+        db.session.commit()
 
         request1 = Adverts(user_id=body["user_id"], pet_id=body['pet_id'], status=body['status'])
         db.session.add(request1)
