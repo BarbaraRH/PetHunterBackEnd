@@ -67,9 +67,11 @@ def handle_pets():
     """
     # GET request
     if request.method == 'GET':
-        all_people = Pets.query.all()
-        all_people = list(map(lambda x: x.serialize(), all_people))
-        return jsonify(all_people), 200
+        pet_id = request.args.get('pet_id')
+        all_pets = Adverts.query.filter_by(pet_id=pet_id)
+        all_pets = list(map(lambda x: x.serialize(), all_pets))
+
+        return jsonify(all_pets), 200
 
     return "Invalid Method", 404
 
