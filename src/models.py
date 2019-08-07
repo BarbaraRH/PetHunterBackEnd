@@ -31,9 +31,14 @@ class User(db.Model):
             "id": self.id
         }
 
-class Pets(db.Model):
-    __tablename__ = 'pets'
+class Adverts(db.Model):
+    __tablename__ = 'adverts'
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    description = db.Column(db.String(80), unique=False, nullable=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    status = db.Column(db.String(80), unique=False, nullable=True)
+    address = db.Column(db.String(80), unique=False, nullable=True)
     name = db.Column(db.String(80), unique=True, nullable=True)
     breed = db.Column(db.String(80), unique=True, nullable=True)
     gender = db.Column(db.String(80), unique=True, nullable=True)
@@ -41,34 +46,14 @@ class Pets(db.Model):
     photo = db.Column(db.String(300), unique=False, nullable=True)
 
     def __repr__(self):
-        return '<Pets %r>' % self.username
-
-    def serialize(self):
-        return {
-            "name": self.name,
-            "id": self.id
-        }
-
-class Adverts(db.Model):
-    __tablename__ = 'adverts'
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    pet_id = db.Column(db.Integer, db.ForeignKey('pets.id'))
-    description = db.Column(db.String(80), unique=False, nullable=True)
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
-    status = db.Column(db.String(80), unique=False, nullable=True)
-    address = db.Column(db.String(80), unique=False, nullable=True)
-
-    def __repr__(self):
         return 'Adverts %r>' % self.id
 
     def serialize(self):
         return {
             "user_id": self.user_id,
-            "pet_id": self.pet_id,
             "status": self.status,
-            "created_at": self.created_at
+            "created_at": self.created_at,
+            "name": self.name
         }
-
 
 render_er(db.Model, 'diagram.png')

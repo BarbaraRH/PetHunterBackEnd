@@ -7,7 +7,7 @@ from flask_migrate import Migrate
 from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
-from models import db, User, Adverts, Pets
+from models import db, User, Adverts
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -24,6 +24,11 @@ def handle_invalid_usage(error):
 @app.route('/')
 def sitemap():
     return generate_sitemap(app)
+
+@app.route('/user/register', methods=['POST'])
+@app.route('/user/sign-in', methods=['POST', 'GET'])
+@app.route('/user/revoke/logout', methods=['DELETE'])
+@app.route('/user/me', methods=['GET'])
 
 @app.route('/user', methods=['POST', 'GET', 'DELETE'])
 def handle_person():
@@ -60,23 +65,6 @@ def handle_person():
 
     return "Invalid Method", 404
 
-@app.route('/pets', methods=['GET'])
-def handle_pets():
-    """
-    Create person and retrieve all persons
-    """
-    # GET request
-    if request.method == 'GET':
-        all_people = Pets.query.all()
-        all_people = list(map(lambda x: x.serialize(), all_people))
-        return jsonify(all_people), 200
-
-    return "Invalid Method", 404
-
-
-
-
-
 @app.route('/adverts', methods=['POST', 'GET'])
 
 def handle_adverts():
@@ -91,17 +79,11 @@ def handle_adverts():
         if body is None:
             raise APIException("You need to specify the request body as a json object", status_code=400)
         if 'user_id' not in body:
-            raise APIException('You need to specify the pet name', status_code=400)
-        if 'pet_id' not in body:
-            raise APIException('You need to specify the pet name', status_code=400)
+            raise APIException('You need to specify the user_id', status_code=400)
         if 'status' not in body:
-            raise APIException('You need to specify the pet name', status_code=400)
+            raise APIException('You need to specify the status', status_code=400)
 
-        pet1 = Pets(name=body['name'])
-        db.session.add(pet1)
-        db.session.commit()
-
-        request1 = Adverts(user_id=body["user_id"], pet_id=body['pet_id'], status=body['status'])
+        request1 = Adverts(user_id=body["user_id"], status=body['status'], name=body['name'])
         db.session.add(request1)
         db.session.commit()
         return "ok", 200
@@ -113,7 +95,6 @@ def handle_adverts():
         all_adverts = list(map(lambda x: x.serialize(), all_adverts))
 
         return jsonify(all_adverts), 200
-
 
     return "Invalid Method", 404
 
