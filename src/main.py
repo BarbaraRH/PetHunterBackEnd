@@ -67,8 +67,7 @@ def handle_pets():
     """
     # GET request
     if request.method == 'GET':
-        id = request.args.get('id')
-        all_pets = Pets.query.filter_by(id=id)
+        all_pets = Pets.query.all()
         all_pets = list(map(lambda x: x.serialize(), all_pets))
 
         return jsonify(all_pets), 200
