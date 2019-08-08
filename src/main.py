@@ -91,10 +91,6 @@ def handle_adverts():
 
         if body is None:
             raise APIException("You need to specify the request body as a json object", status_code=400)
-        if 'user_id' not in body:
-            raise APIException('You need to specify the pet name', status_code=400)
-        if 'pet_id' not in body:
-            raise APIException('You need to specify the pet name', status_code=400)
         if 'status' not in body:
             raise APIException('You need to specify the pet name', status_code=400)
 
@@ -102,7 +98,9 @@ def handle_adverts():
         db.session.add(pet1)
         db.session.commit()
 
-        request1 = Adverts(user_id=body["user_id"], pet_id=body['pet_id'], status=body['status'])
+        petId=Pets
+
+        request1 = Adverts(status=body['status'], pet_id=body['pet_id'], user_id=body['user_id'])
         db.session.add(request1)
         db.session.commit()
         return "ok", 200
@@ -110,11 +108,16 @@ def handle_adverts():
     # GET request
     if request.method == 'GET':
         status = request.args.get('status')
-        all_adverts = Adverts.query.filter_by(status=status)
+        all_adverts = Adverts.query.filter_by(status=status).order_by(Adverts.created_at.desc())
         all_adverts = list(map(lambda x: x.serialize(), all_adverts))
 
         return jsonify(all_adverts), 200
 
+    """if request.method == 'GET':
+        all_adverts = db.session.query(Adverts).join(Pets).all()
+        all_adverts = list(map(lambda x: x.serialize(), all_adverts))
+
+        return jsonify(all_adverts), 200"""
 
     return "Invalid Method", 404
 

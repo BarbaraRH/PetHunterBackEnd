@@ -20,6 +20,7 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=True)
     password = db.Column(db.String(20), unique=True, nullable=True)
     photo = db.Column(db.String(300), unique=False, nullable=True)
+    adverts = db.relationship('Adverts')
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -39,9 +40,10 @@ class Pets(db.Model):
     gender = db.Column(db.String(80), unique=True, nullable=True)
     size = db.Column(db.String(120), unique=True, nullable=True)
     photo = db.Column(db.String(300), unique=False, nullable=True)
+    adverts = db.relationship('Adverts')
 
     def __repr__(self):
-        return '<Pets %r>' % self.username
+        return '<Pets %r>' % self.id
 
     def serialize(self):
         return {
@@ -69,6 +71,5 @@ class Adverts(db.Model):
             "status": self.status,
             "created_at": self.created_at
         }
-
 
 render_er(db.Model, 'diagram.png')
