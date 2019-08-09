@@ -91,18 +91,19 @@ def handle_adverts():
 
         if body is None:
             raise APIException("You need to specify the request body as a json object", status_code=400)
-        if 'status' not in body:
-            raise APIException('You need to specify the pet name', status_code=400)
+        #if 'status' not in body:
+         #   raise APIException('You need to specify the pet name', status_code=400)
 
-        pet1 = Pets(name=body['name'])
-        db.session.add(pet1)
-        db.session.commit()
-
-        petId=Pets
-
-        request1 = Adverts(status=body['status'], pet_id=body['pet_id'], user_id=body['user_id'])
+        request1 = Pets(name=body['name'])
         db.session.add(request1)
         db.session.commit()
+
+
+        request2 = Adverts(status=body['status'], user_id=body['user_id'])
+        db.session.add(request2)
+        db.session.commit()
+
+
         return "ok", 200
 
     # GET request
