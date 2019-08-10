@@ -8,6 +8,13 @@ from sqlalchemy import create_engine
 from eralchemy import render_er
 from datetime import datetime
 db = SQLAlchemy()
+
+class Photo(db.Model):
+    __tablename__ = 'photo'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(300))
+    data= db.Column(db.LargeBinary)
+
 class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
@@ -17,7 +24,12 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=True)
     password = db.Column(db.String(20), unique=True, nullable=True)
     photo = db.Column(db.String(300), unique=False, nullable=True)
+    bank = db.Column(db.String(20), nullable=True)
+    accountNum = db.Column(db.String(20), nullable=True)
+    accounType = db.Column(db.String(20), nullable=True)
+    rut = db.Column(db.String(20), nullable=True)
     adverts = db.relationship('Adverts')
+
     def __repr__(self):
         return '<User %r>' % self.username
     def serialize(self):
@@ -29,6 +41,7 @@ class User(db.Model):
             "email": self.email,
             "password": self.password,
         }
+
 class Pets(db.Model):
     __tablename__ = 'pets'
     id = db.Column(db.Integer, primary_key=True)
@@ -46,8 +59,8 @@ class Pets(db.Model):
             "id": self.id,
             "breed": self.breed,
             "gender": self.id,
-            "size": self.size
-}
+            "size": self.size}
+
 class Adverts(db.Model):
     __tablename__ = 'adverts'
     id = db.Column(db.Integer, primary_key=True)
@@ -66,4 +79,5 @@ class Adverts(db.Model):
             "status": self.status,
             "created_at": self.created_at
         }
+
 render_er(db.Model, 'diagram.png')
