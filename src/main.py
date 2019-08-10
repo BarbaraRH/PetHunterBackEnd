@@ -72,18 +72,24 @@ def handle_adverts():
        # if 'status' not in body:
         #    raise APIException('You need to specify the status', status_code=400)
 
-        request1 = Pets(name=body['name'])
-        db.session.add(request1)
-        db.session.commit()
+        #request1 = Pets(name=body['name'])
+        #db.session.add(request1)
+        #db.session.commit()
 
-        request2 = Adverts(status=body['status'])
+        #query_the_last_pets= Pets.query.order_by(Pets.id.desc()).first()
+
+        #request2 = Adverts(status=body['status'])
+        #db.session.add(request2)
+        #db.session.commit()
+
+        request1 = Adverts(status=body['status'])
+        request2 = Pets(name=body['name'])
+        request2.adverts.append(request1)
         db.session.add(request2)
         db.session.commit()
+        #Adverts.update().where(Adverts.c.pet_id==null).values(pet_id=query_the_last_pets)
 
-        query_the_last_pets= Pets.query.order_by(Pets.id.desc()).first()
-        Adverts.update().where(Adverts.c.pet_id==null).values(pet_id=query_the_last_pets)
-
-        return str(query_the_last_pets.id)
+        return str("ok")#query_the_last_pets.id
     # GET request
     if request.method == 'GET':
         status = request.args.get('status')
