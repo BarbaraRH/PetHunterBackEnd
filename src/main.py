@@ -1,5 +1,6 @@
 import os
-from flask import Flask, request, jsonify, url_for
+from flask import Flask, request, jsonify, url_for, render_template
+from werkzeug import secure_filename
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from flask_cors import CORS
@@ -18,6 +19,8 @@ except FileExistsError:
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
+app.config['UPLOAD_FOLDER'] = "./upload"
+
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_CONNECTION_STRING')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 MIGRATE = Migrate(app, db)
@@ -32,26 +35,16 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-
-
-@app.route('/upload', methods=['POST', 'GET'])#ruta guardar fotos
+@app.route('/upload', methods=['GET', 'POST'])#ruta guardar fotos
 def upload():
+    # GET request
     if request.method == 'POST':
+        f= request.file["file"]
+        filename=secure_filename(f.filename)
+        f.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+        return "subido con exito"
 
-        photo= request.files["file"]
 
-        newFile= Photo(name= photo.filename, data= photo.read())
-        db.session.add(newFile)
-        db.session.commit()
-
-        ruta=os.path.abspath(photo)
-
-        return "saved photo " + photo.path + ruta
-
-    if request.method == 'GET':
-        all_photos = Photo.query.all()
-        all_photos = list(map(lambda x: x.serialize(), all_photos))
-        return jsonify(all_photos), 200
 
 
 @app.route('/users', methods=['POST', 'GET', 'DELETE'])
