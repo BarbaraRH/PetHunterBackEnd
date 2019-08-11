@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify, url_for, render_template
+from flask import Flask, request, jsonify, url_for, render_template, redirect
 from werkzeug import secure_filename
 from flask_migrate import Migrate
 from flask_swagger import swagger
@@ -19,8 +19,7 @@ except FileExistsError:
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
-app.config['UPLOAD_FOLDER'] = "./upload"
-
+app.config["IMAGE_UPLOADS"] = "./petImgs"
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_CONNECTION_STRING')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 MIGRATE = Migrate(app, db)
@@ -38,11 +37,12 @@ def sitemap():
 @app.route('/upload', methods=['POST'])#ruta guardar fotos
 def upload():
     if request.method == 'POST':
-        file= request.files["inputFile"]
-        newFile=Photo(name=file.filename, data=file.read())
-        db.session.add(newFile)
-        db.session.commit()
-        return "funciona ok"
+        if request.files:
+            image = request.files["image"]
+            image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename))
+            print("Image saved")
+            return "ok"
+
 
 
 
