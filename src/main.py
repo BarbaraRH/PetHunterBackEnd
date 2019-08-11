@@ -8,7 +8,7 @@ from utils import APIException, generate_sitemap
 from models import db, User, Adverts, Pets, Photo
 
 # Create directory
-dirName = 'petImgs'
+dirName = '/workspace/petImgs'
 try:
     # Create target Directory
     os.mkdir(dirName)
@@ -19,7 +19,7 @@ except FileExistsError:
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
-app.config["IMAGE_UPLOADS"] = "./petImgs"
+app.config["IMAGE_UPLOADS"] = dirName
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_CONNECTION_STRING')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 MIGRATE = Migrate(app, db)
@@ -41,7 +41,7 @@ def upload():
             image = request.files["image"]
             image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename))
             print("Image saved")
-            return "ok"
+            return "image sent and saved"
 
 
 
