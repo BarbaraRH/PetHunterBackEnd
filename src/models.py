@@ -45,21 +45,26 @@ class User(db.Model):
 class Pets(db.Model):
     __tablename__ = 'pets'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), unique=True, nullable=True)
-    breed = db.Column(db.String(80), unique=True, nullable=True)
-    gender = db.Column(db.String(80), unique=True, nullable=True)
-    size = db.Column(db.String(120), unique=True, nullable=True)
+    name = db.Column(db.String(80), unique=False, nullable=True)
+    breed = db.Column(db.String(80), unique=False, nullable=True)
+    gender = db.Column(db.String(80), unique=False, nullable=True)
+    size = db.Column(db.String(120), unique=False, nullable=True)
     photo = db.Column(db.String(300), unique=False, nullable=True)
+    chip_num = db.Column(db.Integer, nullable=True)
     adverts = db.relationship('Adverts')
+
     def __repr__(self):
         return '<Pets %r>' % self.id
+
     def serialize(self):
         return {
             "name": self.name,
             "id": self.id,
             "breed": self.breed,
             "gender": self.id,
-            "size": self.size}
+            "size": self.size,
+            "chip_num": self.chip_num
+        }
 
 class Adverts(db.Model):
     __tablename__ = 'adverts'
@@ -70,8 +75,10 @@ class Adverts(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     status = db.Column(db.String(80), unique=False, nullable=True)
     address = db.Column(db.String(80), unique=False, nullable=True)
+
     def __repr__(self):
         return '<Adverts %r>' % self.id
+
     def serialize(self):
         return {
             "user_id": self.user_id,
