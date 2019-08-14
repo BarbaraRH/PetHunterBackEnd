@@ -13,7 +13,15 @@ class Photo(db.Model):
     __tablename__ = 'photo'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(300))
-    data= db.Column(db.LargeBinary)
+    data = db.Column(db.LargeBinary)
+
+    def __repr__(self):
+        return '<Photo %r>' % self.name
+    def serialize(self):
+        return {
+            "name": self.name,
+            "data": self.data,
+        }
 
 class User(db.Model):
     __tablename__ = 'user'

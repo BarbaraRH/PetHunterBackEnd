@@ -1,11 +1,12 @@
 import os
-from flask import Flask, request, jsonify, url_for
+from flask import Flask, request, jsonify, url_for, send_file, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from sqlalchemy import or_
 from models import db, User, Adverts, Pets, Photo
+from io import BytesIO
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -23,7 +24,7 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-@app.route('/upload', methods=['POST'])#ruta guardar fotos
+@app.route('/upload', methods=['POST', 'GET'])#ruta guardar fotos
 def upload():
     if request.method == 'POST':
         photo= request.files["file"]
@@ -34,6 +35,16 @@ def upload():
 
         return "saved photo " + photo.filename
 
+    if request.method == 'GET':
+        all_people = Photo.query.all()
+        all_people = list(map(lambda x: x.serialize(), all_people))
+        return jsonify(all_people), 200
+
+@app.route('/image', methods=['GET'])
+def image():
+    if request.method == 'GET':
+        file_data = Photo.query.filter_by(id=1).first()
+        return send_file(BytesIO(file_data.data), attachment_filename='cat.jpg')
 
 @app.route('/users', methods=['POST', 'GET', 'DELETE'])
 def handle_person():
@@ -110,6 +121,7 @@ def handle_adverts():
         request2.adverts.append(request1)
         db.session.add(request2)
         db.session.commit()
+        #, chip_num=body['chip_num'], breed=body['breed']
         #Adverts.update().where(Adverts.c.pet_id==null).values(pet_id=query_the_last_pets)
 
         return str("ok")#query_the_last_pets.id
