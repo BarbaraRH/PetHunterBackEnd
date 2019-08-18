@@ -26,10 +26,10 @@ class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=True)
-    firstname = db.Column(db.String(80), unique=True, nullable=True)
-    lastname = db.Column(db.String(80), unique=True, nullable=True)
+    firstname = db.Column(db.String(80), unique=False, nullable=True)
+    lastname = db.Column(db.String(80), unique=False, nullable=True)
     email = db.Column(db.String(120), unique=True, nullable=True)
-    password = db.Column(db.String(20), unique=True, nullable=True)
+    password = db.Column(db.String(20), unique=False, nullable=True)
     photo = db.Column(db.String(300), unique=False, nullable=True)
     bank = db.Column(db.String(20), nullable=True)
     accountNum = db.Column(db.String(20), nullable=True)
@@ -43,8 +43,6 @@ class User(db.Model):
         return {
             "id": self.id,
             "username": self.username,
-            "firstname": self.firstname,
-            "lastname": self.lastname,
             "email": self.email,
             "password": self.password,
         }
