@@ -59,12 +59,12 @@ def handle_person():
             raise APIException('You need to specify the email', status_code=400)
         if 'password' not in body:
             raise APIException('You need to specify the password', status_code=400)
-        if 'firstname' not in body:
+        """if 'firstname' not in body:
             raise APIException('You need to specify the firstname', status_code=400)
         if 'lastname' not in body:
-            raise APIException('You need to specify the lastname', status_code=400)
+            raise APIException('You need to specify the lastname', status_code=400)"""
 
-        user1 = User(username=body['username'], email=body['email'], password=body['password'], firstname=body['firstname'], lastname=body['lastname'])
+        user1 = User(username=body['username'], email=body['email'], password=body['password'])
         db.session.add(user1)
         db.session.commit()
         return "ok", 200
@@ -74,6 +74,7 @@ def handle_person():
         all_people = User.query.all()
         all_people = list(map(lambda x: x.serialize(), all_people))
         return jsonify(all_people), 200
+
      # DELETE request
     if request.method == 'DELETE':
         db.session.query(User).delete()
