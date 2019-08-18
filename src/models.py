@@ -19,8 +19,7 @@ class Photo(db.Model):
         return '<Photo %r>' % self.name
     def serialize(self):
         return {
-            "name": self.name,
-            "data": self.data,
+            "name": self.name
         }
 
 class User(db.Model):
@@ -69,7 +68,7 @@ class Pets(db.Model):
             "name": self.name,
             "id": self.id,
             "breed": self.breed,
-            "gender": self.id,
+            "gender": self.gender,
             "size": self.size,
             "chip_num": self.chip_num
         }
@@ -83,6 +82,11 @@ class Adverts(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     status = db.Column(db.String(80), unique=False, nullable=True)
     address = db.Column(db.String(80), unique=False, nullable=True)
+    city = db.Column(db.String(80), unique=False, nullable=True)
+    district = db.Column(db.String(80), unique=False, nullable=True)
+    street1 = db.Column(db.String(80), unique=False, nullable=True)
+    street2 = db.Column(db.String(80), unique=False, nullable=True)
+
 
     def __repr__(self):
         return '<Adverts %r>' % self.id
@@ -92,7 +96,11 @@ class Adverts(db.Model):
             "user_id": self.user_id,
             "pet_id": self.pet_id,
             "status": self.status,
-            "created_at": self.created_at
+            "created_at": self.created_at,
+            "city": self.city,
+            "district": self.district,
+            "street1": self.street1,
+            "street2": self.street2
         }
 
 render_er(db.Model, 'diagram.png')

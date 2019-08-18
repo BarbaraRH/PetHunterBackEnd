@@ -40,11 +40,11 @@ def upload():
         all_people = list(map(lambda x: x.serialize(), all_people))
         return jsonify(all_people), 200
 
-@app.route('/image', methods=['GET'])
-def image():
+@app.route('/image/<id>', methods=['GET'])
+def image(id):
     if request.method == 'GET':
-        file_data = Photo.query.filter_by(id=1).first()
-        return send_file(BytesIO(file_data.data), attachment_filename='cat.jpg')
+        file_data = Photo.query.filter_by(id=id).first()
+        return send_file(BytesIO(file_data.data), attachment_filename=file_data.name)
 
 @app.route('/users', methods=['POST', 'GET', 'DELETE'])
 def handle_person():
@@ -116,8 +116,8 @@ def handle_adverts():
         #db.session.add(request2)
         #db.session.commit()
 
-        request1 = Adverts(status=body['status'])
-        request2 = Pets(name=body['name'], breed=body['breed'], chip_num=body['chip_num'])
+        request1 = Adverts(status=body['status'], city=body['city'], district=body['district'], street1=body['street1'], street2=body['street2'])
+        request2 = Pets(name=body['name'], breed=body['breed'], chip_num=body['chip_num'], size=body['size'], gender=body['gender'])
         request2.adverts.append(request1)
         db.session.add(request2)
         db.session.commit()
