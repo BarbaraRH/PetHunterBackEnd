@@ -34,14 +34,24 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-@app.route('/upload', methods=['POST'])#ruta guardar fotos
+@app.route('/upload', methods=['POST', 'GET'])
 def upload():
+    if request.method == 'GET':
+        all_photo = Photo.query.all()
+        all_photo = list(map(lambda x: x.serialize(), all_photo))
+        return jsonify(all_photo), 200
+
     if request.method == 'POST':
         if request.files:
             image = request.files["image"]
             image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename))
             print("Image saved")
-            return "image sent and saved"
+
+            body = request.get_json()
+            photo_img = Photo(name=body['name'])
+            db.session.add(photo_img)
+            db.session.commit()
+            return "saved on : " + os.path.abspath(os.path.join(app.config["IMAGE_UPLOADS"], image.filename))
 
 
 
