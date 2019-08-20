@@ -19,7 +19,8 @@ class Photo(db.Model):
         return '<Photo %r>' % self.name
     def serialize(self):
         return {
-            "name": self.name
+            "name": self.name,
+            "id": self.id
         }
 
 class User(db.Model):
@@ -84,7 +85,7 @@ class Adverts(db.Model):
     district = db.Column(db.String(80), unique=False, nullable=True)
     street1 = db.Column(db.String(80), unique=False, nullable=True)
     street2 = db.Column(db.String(80), unique=False, nullable=True)
-
+    photo_url = db.Column(db.String(200), unique=False, nullable=True)
 
     def __repr__(self):
         return '<Adverts %r>' % self.id
@@ -98,7 +99,8 @@ class Adverts(db.Model):
             "city": self.city,
             "district": self.district,
             "street1": self.street1,
-            "street2": self.street2
+            "street2": self.street2,
+            "photo_url": self.photo_url
         }
 
 render_er(db.Model, 'diagram.png')

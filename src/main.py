@@ -31,9 +31,11 @@ def upload():
 
         newFile= Photo(name= photo.filename, data= photo.read())
         db.session.add(newFile)
+        db.session.flush()
+        id = newFile.id
         db.session.commit()
 
-        return "saved photo " + photo.filename
+        return {"name": photo.filename, "id": id}
 
     if request.method == 'GET':
         all_people = Photo.query.all()
@@ -117,7 +119,7 @@ def handle_adverts():
         #db.session.add(request2)
         #db.session.commit()
 
-        request1 = Adverts(status=body['status'], city=body['city'], district=body['district'], street1=body['street1'], street2=body['street2'])
+        request1 = Adverts(status=body['status'], city=body['city'], district=body['district'], street1=body['street1'], street2=body['street2'], photo_url=body['photo_url'])
         request2 = Pets(name=body['name'], breed=body['breed'], chip_num=body['chip_num'], size=body['size'], gender=body['gender'])
         request2.adverts.append(request1)
         db.session.add(request2)
